@@ -3,35 +3,79 @@ import socketIOClient from "socket.io-client";
 const ENDPOINT = "http://127.0.0.1:4001";
 const socket = socketIOClient(ENDPOINT);
 
-function App() {
-  const [response, setResponse] = useState("");
+function App(props) {
+  const name = props.location.state.name;
+  const group = props.location.state.group;
+  const [text, setText] = useState("");
+  const [typing, setTyping] = useState("");
+  const [chat,setChat] = useState([]);
   
 
   useEffect(() => {
+
+    socket.emit("subscribe",group);
     
-    socket.on("FromAPI", data => {
-      setResponse(data);
-    });
-    
-    socket.on("broad", data => {
-      alert(data);
+    socket.on("send", (data) => {
+      //chat.concat(data);
+      //alert(chat)
+      var n = data.name;
+      var t = data.text;
+      if(n===name)
+        var msg = "You : "+ t;
+      else
+        var msg = n+" : "+ t;
+      setChat(chat => [...chat, msg])
     });
 
-    return () => socket.disconnect();
+    socket.on('user joined', (data) => {
+      var msg = data +" joined the group !";
+      setChat(chat => [...chat, msg])
+    });
+
+    socket.on("typing", (data) => {
+      setTyping(data.msg);
+    });
+
+    socket.on("left", (data) => {
+      var msg = data +" left the group !";
+      setChat(chat => [...chat, msg])
+    });
+
+    return () => {
+      socket.disconnect(group);
+    }
   }, []);
 
   const send = () => {
-    //const socket = socketIOClient(ENDPOINT);
-    socket.emit("send","hello!");
-    
+    socket.emit("send",{name,text,group});
   }
 
+  const handleText = (e) => {
+    setText(e.target.value) 
+  }
+
+  const handleTyping = () => {
+    var msg = name+" is typing ...";
+    socket.emit("typing",{msg,group});
+  }
+
+  const handleBlur = () => {
+    var msg = "";
+    socket.emit("typing",{msg,group});
+  }
+  
   return (
     <div>
-      <p>
-        It's <p >{response}</p>
-      </p>
-      <button onClick={() => send()}>send</button>
+      <br/>
+      <p>Hello {name}, Welcome to {group} ! </p>
+      <input name="text" type="text" onChange={handleText} value={text} onFocus={handleTyping} onBlur={handleBlur} placeholder="Enter your message ..."/>
+      <button onClick={send}>  send </button>
+      <br/><br/>
+      
+      {chat.map(msg => (
+        <p>{msg}</p>
+      ))}
+      <span>{typing}</span>
     </div>
   );
 }

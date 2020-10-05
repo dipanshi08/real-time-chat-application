@@ -2,11 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import Login from './Login';
 import * as serviceWorker from './serviceWorker';
+import { Router, Link } from "@reach/router";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Router>
+      <Login path="/" />
+      <App path="app" />
+    </Router>
   </React.StrictMode>,
   document.getElementById('root')
 );
