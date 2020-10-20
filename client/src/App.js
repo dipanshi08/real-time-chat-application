@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
-const ENDPOINT = "https://say-hey-server.herokuapp.com";
+import { navigate } from "@reach/router";
+const ENDPOINT = "http://localhost:4001";
 const socket = socketIOClient(ENDPOINT);
 
 function App(props) {
@@ -10,14 +11,11 @@ function App(props) {
   const [typing, setTyping] = useState("");
   const [chat,setChat] = useState([]);
   
-
   useEffect(() => {
-
-    socket.emit("subscribe",group);
-    
+    socket.open();
+    socket.username=name;
+    socket.emit("join",{name,group});
     socket.on("send", (data) => {
-      //chat.concat(data);
-      //alert(chat)
       var n = data.name;
       var t = data.text;
       if(n===name)
@@ -27,8 +25,13 @@ function App(props) {
       setChat(chat => [...chat, msg])
     });
 
-    socket.on('user joined', (data) => {
-      var msg = data +" joined the group !";
+    socket.on('user-joined', (data) => {
+      var msg = data +" joined the group :)";
+      setChat(chat => [...chat, msg])
+    });
+
+    socket.on('user-left', (data) => {
+      var msg = data +" left the group :(";
       setChat(chat => [...chat, msg])
     });
 
@@ -36,10 +39,9 @@ function App(props) {
       setTyping(data.msg);
     });
 
-    socket.on("left", (data) => {
-      var msg = data +" left the group !";
-      setChat(chat => [...chat, msg])
-    });
+    socket.on("get-data", (data) => {
+      console.log(data);
+    })
 
     return () => {
       socket.disconnect(group);
@@ -48,6 +50,15 @@ function App(props) {
 
   const send = () => {
     socket.emit("send",{name,text,group});
+    setText("");
+  }
+
+  const leave = () => {
+    if(window.confirm("Do you really want to leave ?")){
+      socket.emit("leave",{name,group});
+      socket.close()
+      navigate("/");
+    }
   }
 
   const handleText = (e) => {
@@ -63,21 +74,36 @@ function App(props) {
     var msg = "";
     socket.emit("typing",{msg,group});
   }
+
+  const get = () => {
+    socket.emit("get");
+  }
   
   return (
-    <div>
-      <br/>
-      <p>Hello {name}, Welcome to {group} ! </p>
-      <input name="text" type="text" onChange={handleText} value={text} onFocus={handleTyping} onBlur={handleBlur} placeholder="Enter your message ..."/>
-      <button onClick={send}>  send </button>
-      <br/><br/>
+    <div className="container">
+      <button onClick={leave} className="btn"> Exit </button> <br/><br/>
+      <div className="jumbotron">
+        <p>Hello {name}, Welcome to {group} ! </p>
+        <input className="col-8" name="text" type="text" onChange={handleText} value={text} onFocus={handleTyping} onBlur={handleBlur} placeholder="Enter your message ..."/>
+        <button className="btn btn-primary offset-1" onClick={send}>  Send </button>
+        
+        <br/><br/>
+
+      </div>
+      <div className="card">
+        <div className="card-body">
+          {chat.map(msg => (
+            <p>{msg}</p>
+          ))}
+          <span>{typing}</span>
+        </div>
+      </div>
       
-      {chat.map(msg => (
-        <p>{msg}</p>
-      ))}
-      <span>{typing}</span>
+      
     </div>
   );
 }
 
 export default App;
+
+//<button onClick={get}> Get </button>

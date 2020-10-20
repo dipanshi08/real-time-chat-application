@@ -5,7 +5,7 @@ import { navigate } from "@reach/router";
 function Login() {
   const [name, setName] = useState("");
   const [group, setGroup] = useState("");
-  
+
   const enter = () => {
     console.log("login");
     navigate("app",{state:{name,group}});
@@ -19,13 +19,13 @@ function Login() {
   }
   
   return (
-    <div>
+    <div className="container jumbotron" >
       <br/>
-      <label>Name :</label>
-      <input name="name" onChange={handleName} value={name} /><br/><br/>
-      <label>Group Name :</label>
-      <input name="group" onChange={handleGroup} value={group} /><br/><br/><br/>
-      <button onClick={enter}> Enter </button>
+      <label className="col-4">Name :</label>
+      <input className="col-4" name="name" onChange={handleName} value={name} /><br/><br/>
+      <label className="col-4">Group Name :</label>
+      <input className="col-4" name="group" onChange={handleGroup} value={group} /><br/><br/>
+      <button className="btn btn-primary offset-6 col-2" onClick={enter}> Enter </button>
     </div>
   );
 }

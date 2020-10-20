@@ -10,7 +10,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Login path="/" />
-      <App path="app" />
+      <App path="/app" />
     </Router>
   </React.StrictMode>,
   document.getElementById('root')
