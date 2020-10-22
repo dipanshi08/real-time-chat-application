@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import socketIOClient from "socket.io-client";
 import { navigate } from "@reach/router";
+import './App.css';
 const ENDPOINT = "http://localhost:4001";
 const socket = socketIOClient(ENDPOINT);
 
@@ -16,23 +17,24 @@ function App(props) {
     socket.username=name;
     socket.emit("join",{name,group});
     socket.on("send", (data) => {
-      var n = data.name;
-      var t = data.text;
-      if(n===name)
-        var msg = "You : "+ t;
+      //var n = data.name;
+      var msg = data.text;
+      if(data.name===name)
+        var n = "You";
       else
-        var msg = n+" : "+ t;
-      setChat(chat => [...chat, msg])
+        var n = data.name;
+      setChat(chat => [...chat, {name:n,text:data.text}])
+      
     });
 
     socket.on('user-joined', (data) => {
       var msg = data +" joined the group :)";
-      setChat(chat => [...chat, msg])
+      setChat(chat => [...chat, {name:data,text:"joined"}])
     });
 
     socket.on('user-left', (data) => {
       var msg = data +" left the group :(";
-      setChat(chat => [...chat, msg])
+      setChat(chat => [...chat, {name:data,text:"left"}])
     });
 
     socket.on("typing", (data) => {
@@ -79,27 +81,49 @@ function App(props) {
     socket.emit("get");
   }
   
+  const AlwaysScrollToBottom = () => {
+  const elementRef = useRef();
+  useEffect(() => elementRef.current.scrollIntoView());
+  return <div ref={elementRef} />;
+  };
+
+
   return (
     <div className="container">
       <button onClick={leave} className="btn"> Exit </button> <br/><br/>
-      <div className="jumbotron">
-        <p>Hello {name}, Welcome to {group} ! </p>
-        <input className="col-8" name="text" type="text" onChange={handleText} value={text} onFocus={handleTyping} onBlur={handleBlur} placeholder="Enter your message ..."/>
-        <button className="btn btn-primary offset-1" onClick={send}>  Send </button>
-        
-        <br/><br/>
-
+      <div className="col-12 col-md-8 mx-auto">
+      <div className="card chat-card">
+      <div class="card-header">
+         <h5 className="text-center">{group}</h5>
       </div>
-      <div className="card">
-        <div className="card-body">
+      <div className="card-body" id="cb"  >     
+        <div className="card-text">
+
           {chat.map(msg => (
-            <p>{msg}</p>
-          ))}
+            <div  >
+            {(msg.text === "joined" || msg.text === "left") ? 
+            <p align="center">{msg.name} {msg.text} the chat !</p> :
+            <div>
+            {msg.name === "You" ? 
+               <p align="right">{msg.name} : {msg.text}</p> :
+                <p align="left">{msg.name} : {msg.text}</p>
+            }
+            </div>
+            }
+            </div>
+          ))
+          }
+          <AlwaysScrollToBottom />
           <span>{typing}</span>
         </div>
+        </div>
+        <div className="card-footer py-0 px-0">
+        <input className="chat-input col-10 col-xl-11" name="text" type="text" onChange={handleText} value={text} onFocus={handleTyping} onBlur={handleBlur} placeholder="Enter your message ..."/>
+        <button className="btn btn-primary col-2 col-xl-1" onClick={send}>  Send </button>
+      </div>
       </div>
       
-      
+      </div>
     </div>
   );
 }

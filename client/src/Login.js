@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { navigate } from "@reach/router";
-
+import './App.css';
 
 function Login() {
   const [name, setName] = useState("");
@@ -19,13 +19,29 @@ function Login() {
   }
   
   return (
-    <div className="container jumbotron" >
+    <div className="container-fluid " >
+    <div className="row main" >
+    <div className="col-10 col-md-4 mx-auto ">
+    <div className="card login-card py-5">
+    <div className="card-body">
       <br/>
-      <label className="col-4">Name :</label>
-      <input className="col-4" name="name" onChange={handleName} value={name} /><br/><br/>
-      <label className="col-4">Group Name :</label>
-      <input className="col-4" name="group" onChange={handleGroup} value={group} /><br/><br/>
-      <button className="btn btn-primary offset-6 col-2" onClick={enter}> Enter </button>
+      <div className="row justify-content-center">
+        <label className="col-5 col-md-4  " hidden >Name :</label>
+        <input className=".login-input col-8 col-md-7" name="name" onChange={handleName} value={name} placeHolder="Name"/>
+      </div>
+      <br/>
+      <div className="row justify-content-center">
+        <label className="col-5 col-md-4" hidden>Group Name :</label>
+        <input className=".login-input col-8 col-md-7" name="group" onChange={handleGroup} value={group} placeHolder="Group"/>
+      </div>
+      <br/>
+      <div className="row justify-content-center">
+      <button className="btn btn-dark col-6 col-md-4" onClick={enter}> Enter </button>
+      </div>
+    </div>  
+    </div>
+    </div>
+    </div>
     </div>
   );
 }
