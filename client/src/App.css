@@ -1,27 +1,89 @@
 .container-fluid{
+    height: 90vh;
+    background-color: #dde5e8;
+}
+
+.login{
     height: 100vh;
-    width: 100vw;
-    background-color: lightsteelblue;
+}
+.header{
+    height: 10vh;
+}
+.login-page{
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .main{
   width: 100%;
 }
 
-.login-card{
-    background-color: mistyrose;
+.login-card {
+    background-color: snow;
+    border: 1px solid white;
+    border-radius: 50px;
+}
+.login-card .card-body{
+    padding: 25% 0px;
+}
+.logo h1{
+    font-family:fantasy;
+    font-weight: 900;
+    color: ivory;
+}
+
+.login-card h1{
+    font-family: "Lucida Console", Monaco, monospace;
 }
 
 .login-input{
-    padding: 5px;
-    border: none;
+    padding: 10px;
+    border:none;
     border-radius: 5px;
+    font-size: 20px;
+    background-color: whitesmoke;
+}
+
+.isMatch{
+    color: red;
+    font-size: 12px;
+}
+
+.login-card .links{
+    border:none;
+    background-color: inherit;
+    text-decoration: underline;
+    position: relative;
+    bottom: 30px;
+    cursor: pointer;
+}
+.dashboard-card{
+    background-color: snow;
+    padding: 1% 0px;
+    border: 1px solid white;
+    border-radius: 10px;
+}
+
+.dashboard-card .description{
+    padding: 0px;
+}
+
+.dashboard h1{
+    font-family: Impact, 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;
+}
+
+.dashboard-input{
+    padding: 10px;
+    border: none;
+    border-bottom:1px solid black;
+    border-radius: 2px;
+    font-size: 20px;
+    background-color: whitesmoke;
 }
 
 .chat-card .card-body{
-    height: 70vh;
+    height: 65vh;
     overflow-y:scroll;
 }
 
@@ -29,8 +91,20 @@
     height:40px;
 }
 
-
 .chat-card input{
     border: none;
     border-radius: 5px;
+}
+
+.active-users{
+    border: 2px solid white;
+    padding: 20px;
+}
+
+.group-list{
+    height: 90vh;
+    overflow-y:scroll;
+}
+.group-list .card{
+    margin: 20px;
 }

@@ -1,37 +1,39 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
 import { navigate } from "@reach/router";
+import axios from 'axios';
 import './App.css';
 const ENDPOINT = process.env.REACT_APP_DOMAIN;
 
-function Login() {
+function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [isMatch, setIsMatch] = useState("");
-  
+
   const enter = (e) => {
-    e.preventDefault();    
+    e.preventDefault();
+    console.log("login");
     const newUser = {
       username,
-      password
+      password,
+      email,
     }
+    console.log(newUser);
     var config = {
       method: 'post',
-      url: ENDPOINT + '/',
+      url: ENDPOINT + '/users/add',
       headers: {
-        "Content-Type": "application/json",
+        ContentType: "application/json"
       },
       data: newUser,
+      
     }
     
     axios(config)
-      .then(res => {
-        if(res.data === "success"){
-          sessionStorage.setItem('username', username)
-          navigate("dashboard",{state:{username}})
-        }
-        else
-          setIsMatch("*Incorrect username or password")
+      .then(res =>{
+        console.log(res.data)
+        navigate("/");
       })
       .catch((error) => {
         console.log(error)
@@ -46,37 +48,19 @@ function Login() {
   const handlePassword = (e) => {
     setPassword(e.target.value) 
   }
-  
-  const forgotPassword = () => {
-    console.log(username)
-    if(username==="")
-      setIsMatch("*Enter username");
+  const handleConfirmPassword = (e) => {
+    setConfirmPassword(e.target.value) 
+    if(password === e.target.value){
+      setIsMatch("")
+    }
     else{
-      var config = {
-        method: 'get',
-        url: ENDPOINT + '/users/forgotpassword/'+username,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-      
-      axios(config)
-        .then(res => {
-          if(res.data === "nouser"){
-            setIsMatch("*Incorrect username")
-          }
-          else
-            console.log(res.data)
-        })
-        .catch((error) => {
-          console.log(error)
-        });
-
-      //navigate("dashboard",{state:{name}});
-      alert("We have sent a one time use password to the email ID linked with your account. You can change the password once you login with those credentials.");
+      setIsMatch("*Passwords do not match")
     }
   }
-
+  const handleEmail = (e) => {
+    setEmail(e.target.value)
+  }
+  
   return (
     <div className="login container-fluid login-page" >
     <div className="row main" >
@@ -87,12 +71,10 @@ function Login() {
     <div className="card login-card">
     <div className="card-body">
       <div className="row justify-content-center">
-        <h1>LOGIN</h1>
+        <h1>REGISTER</h1>
       </div>
       <br/><br/>
-      <div className="row justify-content-center">
-        <span className="isMatch" >{isMatch}</span>
-      </div>
+      <form onSubmit={enter}>
       <div className="row justify-content-center">
         <label className="col-5 col-md-4  " hidden >User Name :</label>
         <input className="login-input col-8" 
@@ -117,15 +99,40 @@ function Login() {
       </div>
       <br/>
       <div className="row justify-content-center">
-      <button className="btn btn-dark col-6 col-md-4" onClick={enter}> Enter </button>
+        <label className="col-5 col-md-4" hidden>Confirm Password :</label>
+        <input className="login-input col-8" 
+          name="confirmPassword" 
+          onChange={handleConfirmPassword} 
+          value={confirmPassword} 
+          placeHolder="Confirm Password" 
+          type="password"
+          required
+        />
+        
       </div>
-    
-    </div> 
+      <div className="row justify-content-center">
+        <span className="isMatch " >{isMatch}</span>
+      </div>
+      <br/>
+      <div className="row justify-content-center">
+        <label className="col-5 col-md-4" hidden>Email :</label>
+        <input className="login-input col-8" 
+          name="email" 
+          onChange={handleEmail} 
+          value={email} 
+          placeHolder="Email" 
+          type="email"
+          required
+        />
+      </div>
+      <br/>
+      <div className="row justify-content-center">
+      <button className="btn btn-dark col-6 col-md-4" type="submit" > Enter </button>
+      </div>
+      </form>
+    </div>  
     <div className="row justify-content-center">
-        <button className="links" onClick={forgotPassword}>Forgot Password?</button>
-    </div>
-    <div className="row justify-content-center">
-        <button className="links" onClick={() => {navigate("register")}}>Don't have an account? Register.</button>
+        <button className="links" onClick={() => {navigate("/")}}>Already have an account? Login.</button>
     </div>
     </div>
     </div>
@@ -134,4 +141,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
