@@ -17,7 +17,7 @@ function Login() {
     }
     var config = {
       method: 'post',
-      url: ENDPOINT + '/',
+      url: ENDPOINT + '/users/login',
       headers: {
         "Content-Type": "application/json",
       },
